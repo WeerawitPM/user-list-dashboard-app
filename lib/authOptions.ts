@@ -6,14 +6,14 @@ export const authOptions: NextAuthOptions = {
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-            // authorization: {
-            //     params: {
-            //         prompt: "consent",
-            //         access_type: "offline",
-            //         response_type: "code",
-            //         // scope: 'openid email https://www.googleapis.com/auth/spreadsheets.readonly',
-            //     }
-            // }
+            authorization: {
+                params: {
+                    prompt: "consent",
+                    access_type: "offline",
+                    response_type: "code",
+                    scope: 'https://www.googleapis.com/auth/spreadsheets',
+                }
+            }
         }),
     ],
     callbacks: {
