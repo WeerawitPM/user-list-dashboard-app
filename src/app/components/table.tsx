@@ -6,9 +6,11 @@ import {
     SortDescriptor,
     Select,
     SelectItem,
+    Alert,
 } from "@nextui-org/react";
 import { UserTable } from "./user_table";
 import { InputSearch } from "./input_search";
+import { FiDownload } from "react-icons/fi";
 
 type Props = {
     data: User[];
@@ -23,6 +25,10 @@ export default function TableComponent({ data }: Props) {
     const [cityFilter, setCityFilter] = React.useState<string | { target: { value: string } }>("");
     const [countryFilter, setCountryFilter] = React.useState<string | { target: { value: string } }>("");
     const [companyFilter, setCompanyFilter] = React.useState<string | { target: { value: string } }>("");
+
+    const [alertData, setAlertData] = React.useState<{ visible: boolean; title?: string; description?: string; color?: string }>({
+        visible: false,
+    });
 
     const rowsPerPage = 20;
 
@@ -98,22 +104,49 @@ export default function TableComponent({ data }: Props) {
             const result = await response.json();
 
             if (response.ok) {
-                alert(`Export successful! View your Google Sheet: ${result.sheetUrl}`);
+                setAlertData({
+                    visible: true,
+                    color: "success",
+                    title: "Export successful!",
+                    description: `View your Google Sheet: ${result.sheetUrl}`,
+                });
             } else {
-                alert(`Export failed: ${result.error}`);
+                setAlertData({
+                    visible: true,
+                    color: "error",
+                    title: "Export failed!",
+                    description: result.error,
+                });
             }
         } catch (error) {
             console.error("Error exporting data:", error);
-            alert("An error occurred while exporting the data.");
+            setAlertData({
+                visible: true,
+                color: "error",
+                title: "Error!",
+                description: "An error occurred while exporting the data.",
+            });
         }
     }
 
     return (
         <div className="flex flex-col w-full gap-5">
+            {/* Alert Component */}
+            {alertData.visible && (
+                <Alert
+                    hideIcon
+                    color={alertData.color}
+                    title={alertData.title}
+                    description={alertData.description}
+                    variant="faded"
+                    onClose={() => setAlertData({ visible: false })}
+                />
+            )}
             <button
                 onClick={handleExportToGoogleSheet}
-                className="bg-blue-500 text-white px-4 py-2 rounded"
+                className="bg-blue-500 text-white text-sm rounded ml-auto p-2 flex items-center gap-2"
             >
+                <FiDownload size={16} />
                 Export to New Google Sheet
             </button>
             <div className="flex gap-4">
