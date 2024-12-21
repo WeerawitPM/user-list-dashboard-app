@@ -13,7 +13,7 @@ const fetchData = async () => {
 
 export default async function Home() {
   const data = await fetchData();
-  console.log(data);
+  // console.log(data);
   return (
     <section className="py-24 h-full bg-white dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-5 sm:px-10 md:px-12 lg:px-5 flex flex-col md:flex-row gap-16">

@@ -1,5 +1,6 @@
 'use client';
 
+import React from "react";
 import {
     Table,
     TableHeader,
@@ -9,9 +10,8 @@ import {
     TableCell,
     Pagination,
     getKeyValue,
+    SortDescriptor,
 } from "@nextui-org/react";
-
-import React from "react";
 
 type User = {
     id: string;
@@ -34,21 +34,45 @@ type Props = {
 };
 
 export default function TableComponent({ data }: Props) {
-    const [page, setPage] = React.useState(1);
+    const [page, setPage] = React.useState<number>(1);
+    const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor | null>(null);
+
     const rowsPerPage = 100;
 
-    const pages = Math.ceil(data.length / rowsPerPage);
+    const sortedData = React.useMemo<User[]>(() => {
+        if (!sortDescriptor) return data;
 
-    const items = React.useMemo(() => {
+        const { column, direction } = sortDescriptor;
+        const sorted = [...data].sort((a, b) => {
+            const first = column === "id" ? parseInt(getKeyValue(a, column) as string) : getKeyValue(a, column);
+            const second = column === "id" ? parseInt(getKeyValue(b, column) as string) : getKeyValue(b, column);
+            // const first = getKeyValue(a, column);
+            // const second = getKeyValue(b, column);
+
+            let cmp: number =
+                typeof first === "string" && typeof second === "string"
+                    ? first.localeCompare(second)
+                    : (first as number) - (second as number);
+
+            return direction === "descending" ? cmp * -1 : cmp;
+        });
+
+        return sorted;
+    }, [data, sortDescriptor]);
+
+    const pages = Math.ceil(sortedData.length / rowsPerPage);
+
+    const items = React.useMemo<User[]>(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
 
-        return data.slice(start, end);
-    }, [page, data]);
+        return sortedData.slice(start, end);
+    }, [page, sortedData]);
 
     return (
         <Table
-            aria-label="Table with client-side pagination"
+            isStriped
+            aria-label="Table with client-side pagination and sorting"
             bottomContent={
                 <div className="flex w-full justify-center">
                     <Pagination
@@ -58,28 +82,54 @@ export default function TableComponent({ data }: Props) {
                         color="secondary"
                         page={page}
                         total={pages}
-                        onChange={(page) => setPage(page)}
+                        onChange={(newPage) => setPage(newPage)}
                     />
                 </div>
             }
             classNames={{
                 wrapper: "min-h-[400px]",
             }}
+            sortDescriptor={sortDescriptor || undefined}
+            onSortChange={(descriptor) => setSortDescriptor(descriptor)}
         >
             <TableHeader>
-                <TableColumn>ID</TableColumn>
-                <TableColumn>Photo</TableColumn>
-                <TableColumn>First Name</TableColumn>
-                <TableColumn>Last Name</TableColumn>
-                <TableColumn>Email</TableColumn>
-                <TableColumn>Gender</TableColumn>
-                <TableColumn>City</TableColumn>
-                <TableColumn>Country</TableColumn>
-                <TableColumn>Country Code</TableColumn>
-                <TableColumn>State</TableColumn>
-                <TableColumn>Street Address</TableColumn>
-                <TableColumn>Job Title</TableColumn>
-                <TableColumn>Company Name</TableColumn>
+                <TableColumn key="id" allowsSorting>
+                    ID
+                </TableColumn>
+                <TableColumn key="photo">Photo</TableColumn>
+                <TableColumn key="first_name" allowsSorting>
+                    First Name
+                </TableColumn>
+                <TableColumn key="last_name" allowsSorting>
+                    Last Name
+                </TableColumn>
+                <TableColumn key="email" allowsSorting>
+                    Email
+                </TableColumn>
+                <TableColumn key="gender" allowsSorting>
+                    Gender
+                </TableColumn>
+                <TableColumn key="city" allowsSorting>
+                    City
+                </TableColumn>
+                <TableColumn key="country" allowsSorting>
+                    Country
+                </TableColumn>
+                <TableColumn key="country_code" allowsSorting>
+                    Country Code
+                </TableColumn>
+                <TableColumn key="state" allowsSorting>
+                    State
+                </TableColumn>
+                <TableColumn key="street_address" allowsSorting>
+                    Street Address
+                </TableColumn>
+                <TableColumn key="job_title" allowsSorting>
+                    Job Title
+                </TableColumn>
+                <TableColumn key="company_name" allowsSorting>
+                    Company Name
+                </TableColumn>
             </TableHeader>
             <TableBody items={items}>
                 {(item) => (
@@ -89,7 +139,11 @@ export default function TableComponent({ data }: Props) {
                             <img
                                 src={item.photo}
                                 alt={`${item.first_name} ${item.last_name}`}
-                                style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+                                style={{
+                                    width: "50px",
+                                    height: "50px",
+                                    borderRadius: "50%",
+                                }}
                             />
                         </TableCell>
                         <TableCell>{item.first_name}</TableCell>
