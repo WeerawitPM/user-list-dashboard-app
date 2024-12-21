@@ -11,22 +11,6 @@ import {
 } from "@nextui-org/react";
 import Image from "next/image";
 
-type User = {
-    id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    gender: string;
-    city: string;
-    country: string;
-    country_code: string;
-    state: string;
-    street_address: string;
-    job_title: string;
-    company_name: string;
-    photo: string;
-};
-
 export const UserTable: React.FC<{
     data: User[];
     setSortDescriptor: React.Dispatch<React.SetStateAction<SortDescriptor | null>>;

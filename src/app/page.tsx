@@ -1,18 +1,20 @@
+import { getSheetData } from "@/app/api/google_sheet/google-sheets.action";
 import TableComponent from "./components/table";
-import axios from "axios";
+// import axios from "axios";
 
-const fetchData = async () => {
-  try {
-    const response = await axios.get(`https://api.sheetbest.com/sheets/6c765f81-c6d9-45c6-a82f-94dcb942868b`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return [];
-  }
-}
+// const fetchData = async () => {
+//   try {
+//     const response = await axios.get(`https://api.sheetbest.com/sheets/6c765f81-c6d9-45c6-a82f-94dcb942868b`);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching data:", error);
+//     return [];
+//   }
+// }
 
 export default async function Home() {
-  const data = await fetchData();
+  // const data = await fetchData();
+  const data: User[] = await getSheetData();
   // console.log(data);
   return (
     <section className="py-12 h-full bg-white dark:bg-black">
