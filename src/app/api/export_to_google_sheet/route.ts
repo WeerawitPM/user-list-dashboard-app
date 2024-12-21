@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     const glAuth = await google.auth.getClient({
       credentials: {
         client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-        private_key: privateKey.replace(/\\n/g, '\n'),
+        private_key: privateKey,
       },
       scopes: [
         "https://www.googleapis.com/auth/spreadsheets",

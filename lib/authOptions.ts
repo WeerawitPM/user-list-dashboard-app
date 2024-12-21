@@ -6,17 +6,13 @@ export const authOptions: NextAuthOptions = {
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-            authorization: {
-                params: {
-                    prompt: "consent",
-                    access_type: "online",
-                    response_type: "code",
-                    scope: 'openid email profile',
-                }
-            }
         }),
     ],
-    secret: process.env.NEXTAUTH_SECRET
+    session: {
+        strategy: "jwt",
+        maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
+    },
+    secret: process.env.NEXTAUTH_SECRET,
     // callbacks: {
     //     async session({ session, token }) {
     //         session.user.id = token.id;
@@ -32,6 +28,6 @@ export const authOptions: NextAuthOptions = {
     //         }
     //         return token;
     //     },
-    // },
+    // }
 };
 
