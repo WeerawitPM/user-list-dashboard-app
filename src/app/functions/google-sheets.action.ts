@@ -2,10 +2,15 @@
 import { google } from "googleapis";
 
 export async function getSheetData(): Promise<User[]> {
+    const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+    if (!privateKey) {
+        throw new Error("GOOGLE_PRIVATE_KEY is not set in the environment variables.");
+    }
+
     const glAuth = await google.auth.getClient({
         credentials: {
             client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-            private_key: process.env.GOOGLE_PRIVATE_KEY,
+            private_key: privateKey.replace(/\\n/g, '\n'),
         },
         scopes: ["https://www.googleapis.com/auth/spreadsheets"],
     });
