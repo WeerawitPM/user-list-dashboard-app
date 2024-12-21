@@ -2,19 +2,13 @@
 
 import React from "react";
 import {
-    Table,
-    TableHeader,
-    TableColumn,
-    TableBody,
-    TableRow,
-    TableCell,
-    Pagination,
     getKeyValue,
     SortDescriptor,
-    Input,
     Select,
     SelectItem,
 } from "@nextui-org/react";
+import { UserTable } from "./user_table";
+import { InputSearch } from "./input_search";
 
 type User = {
     id: string;
@@ -40,6 +34,7 @@ export default function TableComponent({ data }: Props) {
     const [page, setPage] = React.useState<number>(1);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor | null>(null);
     const [searchQuery, setSearchQuery] = React.useState<string>("");
+    
     const [genderFilter, setGenderFilter] = React.useState<string | { target: { value: string } }>("");
     const [cityFilter, setCityFilter] = React.useState<string | { target: { value: string } }>("");
     const [countryFilter, setCountryFilter] = React.useState<string | { target: { value: string } }>("");
@@ -47,7 +42,7 @@ export default function TableComponent({ data }: Props) {
 
     const rowsPerPage = 20;
 
-    // Extract unique genders from data
+    // Filter
     const uniqueGenders = Array.from(new Set(data.map(user => user.gender)));
     const uniqueCities = Array.from(new Set(data.map(user => user.city)));
     const uniqueCountries = Array.from(new Set(data.map(user => user.country)));
@@ -82,6 +77,7 @@ export default function TableComponent({ data }: Props) {
         return filtered;
     }, [data, searchQuery, genderFilter, cityFilter, countryFilter, companyFilter]);
 
+    //Sorting
     const sortedData = React.useMemo<User[]>(() => {
         if (!sortDescriptor) return filteredData;
         const { column, direction } = sortDescriptor;
@@ -96,6 +92,7 @@ export default function TableComponent({ data }: Props) {
         });
     }, [filteredData, sortDescriptor]);
 
+    //Pagination
     const pages = Math.ceil(sortedData.length / rowsPerPage);
 
     const items = React.useMemo<User[]>(() => {
@@ -107,7 +104,7 @@ export default function TableComponent({ data }: Props) {
     return (
         <div className="flex flex-col w-full gap-5">
             <div className="flex gap-4">
-                <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+                <InputSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
                 <Select
                     label="Filter by Gender"
                     value={typeof genderFilter === 'string' ? genderFilter : genderFilter.target.value}
@@ -164,85 +161,3 @@ export default function TableComponent({ data }: Props) {
         </div>
     );
 }
-
-const SearchBar: React.FC<{ searchQuery: string; setSearchQuery: React.Dispatch<React.SetStateAction<string>> }> = ({ searchQuery, setSearchQuery }) => (
-    <Input
-        label="Search"
-        placeholder="Enter your text"
-        type="text"
-        variant="bordered"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-    />
-);
-
-const UserTable: React.FC<{
-    data: User[];
-    setSortDescriptor: React.Dispatch<React.SetStateAction<SortDescriptor | null>>;
-    sortDescriptor: SortDescriptor | null;
-    page: number;
-    setPage: React.Dispatch<React.SetStateAction<number>>;
-    totalPages: number;
-}> = ({ data, setSortDescriptor, sortDescriptor, page, setPage, totalPages }) => (
-    <Table
-        isStriped
-        aria-label="Table with client-side pagination and sorting"
-        bottomContent={
-            <div className="flex w-full justify-center">
-                <Pagination
-                    isCompact
-                    showControls
-                    showShadow
-                    color="secondary"
-                    page={page}
-                    total={totalPages}
-                    onChange={(newPage) => setPage(newPage)}
-                />
-            </div>
-        }
-        classNames={{ wrapper: "min-h-[222px]" }}
-        sortDescriptor={sortDescriptor || undefined}
-        onSortChange={(descriptor) => setSortDescriptor(descriptor)}
-    >
-        <TableHeader>
-            <TableColumn key="id" allowsSorting>ID</TableColumn>
-            <TableColumn key="photo">Photo</TableColumn>
-            <TableColumn key="first_name" allowsSorting>First Name</TableColumn>
-            <TableColumn key="last_name" allowsSorting>Last Name</TableColumn>
-            <TableColumn key="email" allowsSorting>Email</TableColumn>
-            <TableColumn key="gender" allowsSorting>Gender</TableColumn>
-            <TableColumn key="city" allowsSorting>City</TableColumn>
-            <TableColumn key="country" allowsSorting>Country</TableColumn>
-            <TableColumn key="country_code" allowsSorting>Country Code</TableColumn>
-            <TableColumn key="state" allowsSorting>State</TableColumn>
-            <TableColumn key="street_address" allowsSorting>Street Address</TableColumn>
-            <TableColumn key="job_title" allowsSorting>Job Title</TableColumn>
-            <TableColumn key="company_name" allowsSorting>Company Name</TableColumn>
-        </TableHeader>
-        <TableBody items={data}>
-            {item => (
-                <TableRow key={item.id}>
-                    <TableCell>{item.id}</TableCell>
-                    <TableCell>
-                        <img
-                            src={item.photo}
-                            alt={`${item.first_name} ${item.last_name}`}
-                            style={{ width: "50px", height: "50px", borderRadius: "50%" }}
-                        />
-                    </TableCell>
-                    <TableCell>{item.first_name}</TableCell>
-                    <TableCell>{item.last_name}</TableCell>
-                    <TableCell>{item.email}</TableCell>
-                    <TableCell>{item.gender}</TableCell>
-                    <TableCell>{item.city}</TableCell>
-                    <TableCell>{item.country}</TableCell>
-                    <TableCell>{item.country_code}</TableCell>
-                    <TableCell>{item.state}</TableCell>
-                    <TableCell>{item.street_address}</TableCell>
-                    <TableCell>{item.job_title}</TableCell>
-                    <TableCell>{item.company_name}</TableCell>
-                </TableRow>
-            )}
-        </TableBody>
-    </Table>
-);
