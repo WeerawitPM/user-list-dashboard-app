@@ -1,4 +1,4 @@
-import { getSheetData } from "@/app/api/google_sheet/google-sheets.action";
+import { getSheetData } from "@/app/functions/google-sheets.action";
 import TableComponent from "./components/table";
 // import axios from "axios";
 

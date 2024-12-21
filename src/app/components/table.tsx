@@ -18,7 +18,7 @@ export default function TableComponent({ data }: Props) {
     const [page, setPage] = React.useState<number>(1);
     const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor | null>(null);
     const [searchQuery, setSearchQuery] = React.useState<string>("");
-    
+
     const [genderFilter, setGenderFilter] = React.useState<string | { target: { value: string } }>("");
     const [cityFilter, setCityFilter] = React.useState<string | { target: { value: string } }>("");
     const [countryFilter, setCountryFilter] = React.useState<string | { target: { value: string } }>("");
@@ -85,8 +85,37 @@ export default function TableComponent({ data }: Props) {
         return sortedData.slice(start, end);
     }, [page, sortedData]);
 
+    async function handleExportToGoogleSheet() {
+        try {
+            const response = await fetch("/api/export_to_google_sheet", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ data: filteredData }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(`Export successful! View your Google Sheet: ${result.sheetUrl}`);
+            } else {
+                alert(`Export failed: ${result.error}`);
+            }
+        } catch (error) {
+            console.error("Error exporting data:", error);
+            alert("An error occurred while exporting the data.");
+        }
+    }
+
     return (
         <div className="flex flex-col w-full gap-5">
+            <button
+                onClick={handleExportToGoogleSheet}
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+                Export to New Google Sheet
+            </button>
             <div className="flex gap-4">
                 <InputSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
                 <Select
