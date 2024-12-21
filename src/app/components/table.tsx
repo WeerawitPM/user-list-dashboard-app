@@ -84,7 +84,7 @@ export default function TableComponent({ data }: Props) {
         return [...filteredData].sort((a, b) => {
             const first = column === "id" ? parseInt(getKeyValue(a, column) as string) : getKeyValue(a, column);
             const second = column === "id" ? parseInt(getKeyValue(b, column) as string) : getKeyValue(b, column);
-            let cmp: number =
+            const cmp: number =
                 typeof first === "string" && typeof second === "string"
                     ? first.localeCompare(second)
                     : (first as number) - (second as number);

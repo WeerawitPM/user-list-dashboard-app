@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useSession, signIn, signOut } from "next-auth/react"
+import Image from 'next/image'
 
 export default function Navbar() {
     const { data: session } = useSession()
@@ -36,7 +37,7 @@ export default function Navbar() {
     }, []);
 
     return (
-        <header className="sticky top-0 w-full flex items-center h-20 border-b border-b-gray-100 dark:border-b-gray-900 z-40 bg-white/80 dark:bg-gray-900 backdrop-filter backdrop-blur-xl">
+        <header className="sticky top-0 w-full flex items-center h-20 border-b border-b-gray-100 dark:border-b-gray-900 z-40 bg-white/80 dark:bg-gray-950 backdrop-filter backdrop-blur-xl">
             <div className="mx-auto lg:max-w-7xl w-full px-5 sm:px-10 md:px-12 lg:px-5">
                 <nav className="w-full flex justify-between gap-6 relative">
                     <div className="min-w-max inline-flex relative">
@@ -85,11 +86,15 @@ export default function Navbar() {
                         </button>
                         {session ? (
                             <div className="flex items-center gap-3">
-                                <img
-                                    src={session.user.image}
-                                    alt="User Avatar"
-                                    className="w-10 h-10 rounded-full border border-gray-100 dark:border-gray-800"
-                                />
+                                {session.user.image && (
+                                    <Image
+                                        src={session.user.image}
+                                        alt="User Avatar"
+                                        width={40}
+                                        height={40}
+                                        className="rounded-full border border-gray-100 dark:border-gray-800"
+                                    />
+                                )}
                                 <button
                                     onClick={() => signOut()}
                                     className="text-sm text-gray-700 dark:text-gray-300"

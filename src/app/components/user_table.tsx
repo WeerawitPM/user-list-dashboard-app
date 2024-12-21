@@ -9,6 +9,7 @@ import {
     Pagination,
     SortDescriptor,
 } from "@nextui-org/react";
+import Image from "next/image";
 
 type User = {
     id: string;
@@ -74,8 +75,10 @@ export const UserTable: React.FC<{
                 <TableRow key={item.id}>
                     <TableCell>{item.id}</TableCell>
                     <TableCell>
-                        <img
+                        <Image
                             src={item.photo}
+                            width={50}
+                            height={50}
                             alt={`${item.first_name} ${item.last_name}`}
                             style={{ width: "50px", height: "50px", borderRadius: "50%" }}
                         />
